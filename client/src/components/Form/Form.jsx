@@ -1,5 +1,6 @@
-import { useEffect } from "react";
 import { useState } from "react";
+
+import style from './Form.module.css';
 
 function Form () {
 
@@ -16,30 +17,27 @@ function Form () {
   });
 
   const nameCheck = (event) => {
-    setName(event.target.value)
+    setName(event.target.value);
 
-    const regexpEmail =
-    /^[а-яА-Яa-zA-Z\-\ ]+$/;
+    const regexpName = /^[а-яА-Яa-zA-Z\-\ ]+$/;
     
-    if(!regexpEmail.test((event.target.value))) {
-      setMessage('Неверно введено ФИО')
-      setFormValid(false)
+    if(!regexpName.test((event.target.value))) {
+      setMessage('Неверно введено ФИО');
+      setFormValid(false);
     } else {
-      setFormValid(true)
-      setMessage('Успешно')
+      setFormValid(true);
+      setMessage('Успешно');
     }
-
   }
 
   const sendForm = (event) => {
     event.preventDefault();
 
     const newUser = {
-      user_name: name,
-      user_age: age,
+      fio: name,
+      age: age
     }
 
-    console.log(newUser)
     fetch('http://127.0.0.1:3003/api', {
       method: 'POST',
       headers: {'Content-Type' : 'application/json'},
@@ -50,22 +48,26 @@ function Form () {
 
   return (
     <div className="container">
-      <form onSubmit={sendForm}>
-        {formValid ? <div>{message}</div> : <div>{message}</div>}
-        <div className="mb-3">
-          <input value={name} onChange={(event) => nameCheck(event)} type="text" className="form-control" placeholder="ФИО" />
-        </div>
+      <form onSubmit={sendForm} className={style.loginForm}>
+        <div className="row">
 
-        <div className="mb-3">
-        <select className="form-select" value={age} onChange={(event) => setAge(event.target.value)}>
-          {options}
-        </select>
-        </div>
+          <div className="mb-3 col-lg-6 col-12 col-md-12 my-auto">
+            {formValid ? <div style={{color: 'green'}}>{message}</div> : <div style={{color: 'red'}}>{message}</div>}
+            <label htmlFor="YourName" className="form-label">ФИО</label>
+            <input value={name} onChange={(event) => nameCheck(event)} type="text" className="form-control" placeholder="Введите ФИО" />
+          </div>
 
-        <div className="col-auto">
-          <button disabled={!formValid} type="submit" className="btn btn-primary mb-3">Отправить</button>
-        </div>
+          <div className="mb-3 col-lg-6 col-12 col-md-12 my-auto">
+            <label htmlFor="YourAge" className="form-label">Возраст</label>
+            <select className="form-select" value={age} onChange={(event) => setAge(event.target.value)}>
+              {options}
+            </select>
+          </div>
 
+          <div className="mb-3 text-center">
+            <button disabled={!formValid} type="submit" className="btn btn-success">Отправить</button>
+          </div>
+        </div>
       </form>
     </div>
   )
